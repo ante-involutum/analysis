@@ -1,0 +1,52 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: svc-analysis
+  labels:
+    app: analysis
+spec:
+  selector:
+    app: analysis
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8005
+      targetPort: 8005
+  clusterIP: None
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-analysis
+  labels:
+    app: analysis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analysis
+  template:
+    metadata:
+      labels:
+        app: analysis
+    spec:
+      containers:
+        - name: analysis
+          image: mx2542/anti-analysis:latest
+          command:
+            - "uvicorn"
+          args:
+            - "src.main:app"
+            - "--reload"
+            - "--host=0.0.0.0"
+            - "--port=8005"
+          ports:
+            - containerPort: 8005
+          imagePullPolicy: Always
+          env:
+            - name: INFLUXDB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb
+                  key: admin-user-token
