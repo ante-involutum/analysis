@@ -1,7 +1,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: svc-analysis
+  name: analysis
   labels:
     app: analysis
 spec:
@@ -18,7 +18,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: svc-analysis
+  name: analysis
   labels:
     app: analysis
 spec:
