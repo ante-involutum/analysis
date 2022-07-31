@@ -10,7 +10,6 @@ autopep8 = "==1.6.0"
 uvicorn = {extras = ["standard"], version = "==0.17.6"}
 requests-toolbelt = "==0.9.1"
 python-multipart = "==0.0.5"
-influxdb-client = "==1.29.1"
 kafka-python = "==2.0.2"
 prometheus-client = "==0.14.1"
 
