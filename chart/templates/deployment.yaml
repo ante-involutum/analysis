@@ -44,9 +44,3 @@ spec:
           ports:
             - containerPort: 8005
           imagePullPolicy: Always
-          env:
-            - name: INFLUXDB_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: middleware-influxdb
-                  key: admin-user-token
