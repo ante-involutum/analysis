@@ -2,11 +2,11 @@ from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.env import *
 import prometheus_client
-from kafka import KafkaConsumer
+
 from src.metrics import registry, jmeter
 from src.helper import msg_to_dict
+from src.kafka import get_origin_data_form_kafka, subscribe_origin_data_form_kafka
 
 
 app = FastAPI(name="analysis")
@@ -20,34 +20,27 @@ app.add_middleware(
 )
 
 
-origin_consumer = KafkaConsumer(
-    'jmx',
-    group_id='origin',
-    bootstrap_servers=['middleware-kafka.tink:9092'],
-    auto_offset_reset='earliest'
-)
-
-metrics_consumer = KafkaConsumer(
-    'jmx',
-    group_id='metrics',
-    bootstrap_servers=['middleware-kafka.tink:9092'],
-    auto_offset_reset='earliest',
-)
-
-
 @app.get('/metrics', response_class=PlainTextResponse)
 def get_data():
-    msg = next(metrics_consumer)
-    value = eval(msg.value.decode("UTF-8"))['message']
 
-    for k, v in msg_to_dict(value).items():
-        jmeter.labels('jmeter', msg.topic, k).set(v)
+    for i in subscribe_origin_data_form_kafka():
+
+        task_type = i['value']['task_type']
+        task_name = i['value']['task_name']
+
+        for k, v in msg_to_dict(i['value']['message']).items():
+            jmeter.labels(task_type, task_name, k).set(v)
 
     return prometheus_client.generate_latest(registry)
 
 
+@app.get('/analysis/kafak/{topic}')
+def get_topic_msg(topic):
+    result = get_origin_data_form_kafka(topic)
+    return result
+
+
 @app.get('/analysis/kafak')
-def get_kafak_data():
-    msg = next(origin_consumer)
-    result = eval(msg.value.decode("UTF-8"))
+def sub_topic_msg():
+    result = subscribe_origin_data_form_kafka()
     return result

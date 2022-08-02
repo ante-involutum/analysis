@@ -20,7 +20,7 @@ python_version = "3.9"
 
 [scripts]
 serve = "uvicorn src.main:app --reload --host=127.0.0.1 --port=8004"
-proxy = "kubectl port-forward svc/svc-analysis 8004:8004"
+proxy = "kubectl port-forward svc/analysis 8004:8004"
 build = "docker buildx build -f Dockerfile --platform linux/amd64 -t mx2542/anti-analysis:latest . --push"
 build-dev = "docker buildx build -f Dockerfile --platform linux/amd64 -t mx2542/anti-analysis:dev . --push"
 deploy = "helm install analysis chart"
