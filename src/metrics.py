@@ -9,3 +9,11 @@ jmeter = Gauge(
     ['task_type', 'task_name', 'key'],
     registry=registry
 )
+
+
+demo = Gauge(
+    'demo',
+    'demo Metrics',
+    ['task_type', 'task_name', 'key'],
+    registry=registry
+)
