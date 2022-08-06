@@ -4,9 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import prometheus_client
 
-from src.metrics import registry, jmeter
-from src.helper import msg_to_dict
-from src.kafka import get_origin_data_form_kafka, subscribe_origin_data_form_kafka
+from src.metrics import registry, demo
+from src.kafka import KFConsumer
 
 
 app = FastAPI(name="analysis")
@@ -21,26 +20,20 @@ app.add_middleware(
 
 
 @app.get('/metrics', response_class=PlainTextResponse)
-def get_data():
-
-    for i in subscribe_origin_data_form_kafka():
-
+def metrics():
+    c = KFConsumer('metrics')
+    result = c.subscribe(pattern='^demo-*')
+    for i in result:
         task_type = i['value']['task_type']
         task_name = i['value']['task_name']
-
-        for k, v in msg_to_dict(i['value']['message']).items():
-            jmeter.labels(task_type, task_name, k).set(v)
-
+        demo.labels(task_type, task_name, 'data').set(i['value']['data'])
+    c.close()
     return prometheus_client.generate_latest(registry)
 
 
 @app.get('/analysis/kafak/{topic}')
-def get_topic_msg(topic):
-    result = get_origin_data_form_kafka(topic)
-    return result
-
-
-@app.get('/analysis/kafak')
-def sub_topic_msg():
-    result = subscribe_origin_data_form_kafka()
+async def sub_msg(topic):
+    c = KFConsumer('atop')
+    result = c.subscribe(topics=(topic))
+    c.close()
     return result
