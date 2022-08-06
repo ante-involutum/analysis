@@ -1,6 +1,7 @@
 import json
 
 from kafka import KafkaConsumer
+from src.env import *
 
 
 class KFConsumer():
@@ -8,7 +9,7 @@ class KFConsumer():
     def __init__(self, group_id):
 
         self.group_id = group_id
-        self.servers = 'middleware-kafka.tink:9092'
+        self.servers = f'{MIDDLEWARE_KAFKA_SERVICE_HOST}:{MIDDLEWARE_KAFKA_SERVICE_PORT}'
         self.auto_offset_reset = 'earliest'
         self.value_deserializer = lambda m: json.loads(m.decode('UTF-8'))
         self.c = KafkaConsumer(
