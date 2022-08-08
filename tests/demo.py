@@ -1,9 +1,8 @@
-import time
 import asyncio
 
-from src.kafka import KFConsumer
+from src.utils.helper import KFConsumer
 
-## sync consumer
+# sync consumer
 # c = KFConsumer('test-1')
 # while True:
 #     c.subscribe(pattern='^demo-*')
@@ -11,7 +10,7 @@ from src.kafka import KFConsumer
 #     time.sleep(1)
 
 
-## async consumer
+# async consumer
 async def con(no):
     c = KFConsumer(f'test-{no}')
     while True:
@@ -19,7 +18,6 @@ async def con(no):
         await asyncio.sleep(1)
     # c.close()
     # return result
-
 
 
 async def main():

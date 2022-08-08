@@ -1,15 +1,50 @@
+import re
 import json
 
 from kafka import KafkaConsumer
-from src.env import *
+
+
+def time_to_float(time_str):
+    h, m, s = time_str.strip().split(":")
+    return float(h) * 3600 + float(m) * 60 + float(s)
+
+
+def msg_to_dict(msg):
+    _ = msg.replace(" ", "")
+
+    if 'summary' in _ and 'Avg' in _:
+        values = re.compile(
+            r"summary.(\d*)in(.*)=(.*)Avg:(\d*)Min:(\d*)Max:(\d*)Err:(\d*)(.*)"
+        ).findall(_)[0]
+
+        result = {
+            'summary': float(values[0]),
+            'duration_time': time_to_float(values[1]),
+            'rps': float(values[2].replace("/s", "")),
+            'avg': float(values[3]),
+            'min': float(values[4]),
+            'max': float(values[5]),
+            'erro': float(values[6]),
+        }
+    else:
+        result = {
+            'summary': 0,
+            'duration_time': 0,
+            'rps': 0,
+            'avg': 0,
+            'min': 0,
+            'max': 0,
+            'erro': 0,
+        }
+    return result
 
 
 class KFConsumer():
 
-    def __init__(self, group_id):
+    def __init__(self, hosts, group_id):
 
         self.group_id = group_id
-        self.servers = f'{MIDDLEWARE_KAFKA_SERVICE_HOST}:{MIDDLEWARE_KAFKA_SERVICE_PORT}'
+        self.servers = hosts
         self.auto_offset_reset = 'earliest'
         self.value_deserializer = lambda m: json.loads(m.decode('UTF-8'))
         self.c = KafkaConsumer(

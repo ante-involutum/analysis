@@ -44,3 +44,8 @@ spec:
           ports:
             - containerPort: 8005
           imagePullPolicy: Always
+          env:
+            - name: KAFKA_SERVICE_HOSTS
+              value: middleware-kafka.tink:9092
+            - name: ELASTICSEARCH_SERVICE_HOSTS
+              value: middleware-elasticsearch-master.tink:9200
