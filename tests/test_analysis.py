@@ -9,13 +9,13 @@ class TestAnalysis():
         assert resp.status_code == 200
 
     def test_sub_msg(self):
-        resp = self.bs.get('/analysis/raw/jmeter-3')
+        resp = self.bs.get('/analysis/original/demo-1')
         assert resp.status_code == 200
 
     def test_es_msg(self):
-        resp = self.bs.get('/analysis/attributes/', json={
+        resp = self.bs.post('/analysis/report/', json={
             'job_type': 'demo',
-            'job_name': '3',
+            'job_name': '1',
             'from_': 0,
             'size': 20,
         })

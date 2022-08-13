@@ -39,7 +39,7 @@ def metrics():
     return prometheus_client.generate_latest(registry)
 
 
-@app.get('/analysis/raw/{topic}')
+@app.get('/analysis/original/{topic}')
 async def kafak_msg(topic):
     c = KFConsumer(
         KAFKA_SERVICE_HOSTS,
@@ -50,7 +50,7 @@ async def kafak_msg(topic):
     return result
 
 
-@app.get('/analysis/attributes/')
+@app.post('/analysis/report/')
 async def es_msg(job: Job):
     query = {
         "term": {
