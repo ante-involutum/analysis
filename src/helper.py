@@ -55,11 +55,13 @@ class KFConsumer():
             auto_commit_interval_ms=1000
         )
 
-    def subscribe(self, topics=(), pattern=None, timeout=5000, max_records=1):
+    def subscribe(self, topics=(), pattern=None):
         self.c.subscribe(
             topics=topics,
             pattern=pattern
         )
+
+    def poll(self, timeout=5000, max_records=1):
         msgs = self.c.poll(timeout, max_records)
         result = []
         for msg in msgs.values():

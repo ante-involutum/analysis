@@ -5,10 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import prometheus_client
 
 
-from src.utils.metrics import registry, demo
-from src.utils.helper import KFConsumer
+from src.metrics import registry, demo
+from src.helper import KFConsumer
 from src.env import *
-
 
 app = FastAPI(name="analysis")
 
@@ -22,12 +21,13 @@ app.add_middleware(
 
 
 @app.get('/analysis/metrics', response_class=PlainTextResponse)
-def metrics():
+async def metrics():
     c = KFConsumer(
         KAFKA_SERVICE_HOSTS,
         'atop'
     )
-    result = c.subscribe(pattern='^demo-*')
+    c.subscribe(pattern='^demo-*')
+    result = c.poll()
     for i in result:
         task_type = i['value']['task_type']
         task_name = i['value']['task_name']
@@ -42,6 +42,7 @@ async def kafak_msg(topic):
         KAFKA_SERVICE_HOSTS,
         'atop'
     )
-    result = c.subscribe(topics=(topic))
+    c.subscribe(topics=(topic))
+    result = c.poll()
     c.close()
     return result
