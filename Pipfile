@@ -13,6 +13,8 @@ python-multipart = "==0.0.5"
 kafka-python = "==2.0.2"
 prometheus-client = "==0.14.1"
 elasticsearch = "*"
+loguru = "*"
+aiokafka = "*"
 
 [dev-packages]
 

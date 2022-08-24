@@ -47,5 +47,15 @@ spec:
           env:
             - name: KAFKA_SERVICE_HOSTS
               value: middleware-kafka.tink:9092
-            - name: ELASTICSEARCH_SERVICE_HOSTS
-              value: middleware-elasticsearch-master.tink:9200
+        - name: core
+          image: mx2542/anti-analysis:latest
+          command:
+            # - "sleep"
+            - "python"
+          args:
+            # - "infinity"
+            - "src/core.py"
+          imagePullPolicy: Always
+          env:
+            - name: KAFKA_SERVICE_HOSTS
+              value: middleware-kafka.tink:9092

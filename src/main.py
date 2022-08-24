@@ -3,13 +3,11 @@ from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 import prometheus_client
-from elasticsearch import Elasticsearch
 
-from src.utils.metrics import registry, demo
-from src.utils.helper import KFConsumer
-from src.model.analysis import Job
+
+from src.metrics import registry, demo
+from src.helper import KFConsumer
 from src.env import *
-
 
 app = FastAPI(name="analysis")
 
@@ -21,16 +19,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-es = Elasticsearch(hosts=f'http://{ELASTICSEARCH_SERVICE_HOSTS}')
 
-
-@app.get('/metrics', response_class=PlainTextResponse)
-def metrics():
+@app.get('/analysis/metrics', response_class=PlainTextResponse)
+async def metrics():
     c = KFConsumer(
         KAFKA_SERVICE_HOSTS,
         'atop'
     )
-    result = c.subscribe(pattern='^demo-*')
+    c.subscribe(pattern='^demo-*')
+    result = c.poll()
     for i in result:
         task_type = i['value']['task_type']
         task_name = i['value']['task_name']
@@ -39,28 +36,13 @@ def metrics():
     return prometheus_client.generate_latest(registry)
 
 
-@app.get('/analysis/original/{topic}')
+@app.get('/analysis/raw/{topic}')
 async def kafak_msg(topic):
     c = KFConsumer(
         KAFKA_SERVICE_HOSTS,
         'atop'
     )
-    result = c.subscribe(topics=(topic))
+    c.subscribe(topics=(topic))
+    result = c.poll()
     c.close()
     return result
-
-
-@app.post('/analysis/report/')
-async def es_msg(job: Job):
-    query = {
-        "term": {
-            'task_name': job.job_name
-        }
-    }
-    resp = es.search(
-        index=job.job_type,
-        query=query,
-        size=job.size,
-        from_=job.from_
-    )
-    return resp['hits']['hits']
