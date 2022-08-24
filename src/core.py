@@ -19,9 +19,8 @@ async def consume(topic):
         auto_offset_reset='earliest',
         group_id="core"
     )
-
-    await consumer.start()
     try:
+        await consumer.start()
         async for msg in consumer:
             logger.info(msg)
     except Exception as e:
