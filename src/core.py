@@ -1,12 +1,14 @@
 import json
 import asyncio
+import traceback
 from threading import Thread
 
 from loguru import logger
 from aiokafka import AIOKafkaConsumer
 
 
-bootstrap_servers='middleware-kafka.tink:9092'
+bootstrap_servers = 'middleware-kafka.tink:9092'
+
 
 async def consume(topic):
     logger.info(f'start {topic}')
@@ -24,6 +26,7 @@ async def consume(topic):
             logger.info(msg)
     except Exception as e:
         logger.debug(e)
+        logger.error(traceback.format_exc())
     finally:
         await consumer.stop()
         logger.info(f'stop {topic}')
@@ -61,6 +64,7 @@ async def production_task():
 
         except Exception as e:
             logger.debug(e)
+            logger.error(traceback.format_exc())
 
 
 def start_loop(loop):
