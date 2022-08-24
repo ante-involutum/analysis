@@ -11,7 +11,6 @@ bootstrap_servers = 'middleware-kafka.tink:9092'
 
 
 async def consume(topic):
-    logger.info(f'start {topic}')
     consumer = AIOKafkaConsumer(
         topic,
         bootstrap_servers=bootstrap_servers,
@@ -21,6 +20,7 @@ async def consume(topic):
     )
     try:
         await consumer.start()
+        logger.info(f'start {topic}')
         async for msg in consumer:
             logger.info(msg)
     except Exception as e:
