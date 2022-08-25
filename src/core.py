@@ -1,4 +1,3 @@
-import uuid
 import json
 import asyncio
 import traceback
@@ -12,14 +11,12 @@ bootstrap_servers = 'middleware-kafka.tink:9092'
 
 
 async def consume(topic):
-    group_id = str(uuid.uuid4())[0:5]
     consumer = AIOKafkaConsumer(
         topic,
         bootstrap_servers=bootstrap_servers,
         value_deserializer=lambda m: json.loads(m.decode('UTF-8')),
         auto_offset_reset='earliest',
-        # group_id="core"
-        group_id=group_id
+        group_id=topic
     )
     try:
         await consumer.start()
