@@ -1,64 +1,39 @@
 import json
-import redis
 import asyncio
 import traceback
 from threading import Thread
 
 from loguru import logger
 from aiokafka import AIOKafkaConsumer
+import redis
 
 
-tasks = {}
 bootstrap_servers = 'middleware-kafka.tink:9092'
 
 
 r = redis.Redis(
-    host='redis-master.tink',
+    host='127.0.0.1',
     port=6379,
     decode_responses=True,
     password='changeme'
 )
 
+tasks = {}
+
 
 async def consume(topic):
-    consumer = AIOKafkaConsumer(
-        topic,
-        bootstrap_servers=bootstrap_servers,
-        value_deserializer=lambda m: json.loads(m.decode('UTF-8')),
-        auto_offset_reset='earliest',
-        group_id=topic
-    )
-    try:
-        await consumer.start()
-        logger.info(f'start {topic}')
-        async for msg in consumer:
-            logger.info(msg)
-    except Exception as e:
-        logger.debug(e)
-        logger.error(traceback.format_exc())
-    finally:
-        await consumer.stop()
-        logger.info(f'stop {topic}')
+    while True:
+        logger.info(f'consume: {topic}')
+        await asyncio.sleep(1)
 
 
 async def monitor():
-    for _ in r.lrange('tasks', 0, -1):
-        f = asyncio.run_coroutine_threadsafe(
-            consume(_),
-            thread_loop
-        )
-        tasks[_] = f
-        logger.info(f'restart tasks: {_}')
-
     ps = r.pubsub()
     ps.subscribe('add', 'del')
     for msg in ps.listen():
         if msg['type'] == 'message':
-            data = msg['data']
-            if data in tasks.keys():
-                pass
-
             if msg['channel'] == 'add':
+                data = msg['data']
                 f = asyncio.run_coroutine_threadsafe(
                     consume(data),
                     thread_loop
@@ -67,6 +42,7 @@ async def monitor():
                 logger.info(f'add tasks: {data}')
 
             if msg['channel'] == 'del':
+                data = msg['data']
                 f = tasks[data]
                 f.cancel()
                 tasks.pop(data)
