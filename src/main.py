@@ -20,6 +20,16 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+async def startup_event():
+    pass
+
+
+@app.on_event("shutdown")
+def shutdown_event():
+    pass
+
+
 @app.get('/analysis/metrics', response_class=PlainTextResponse)
 async def metrics():
     c = KFConsumer(
