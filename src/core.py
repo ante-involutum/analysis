@@ -13,7 +13,7 @@ bootstrap_servers = 'middleware-kafka.tink:9092'
 
 
 r = redis.Redis(
-    host='redis-master.tink',
+    host='middleware-redis-headless.tink',
     port=6379,
     decode_responses=True,
     password='changeme'
