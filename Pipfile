@@ -15,6 +15,8 @@ prometheus-client = "==0.14.1"
 loguru = "==0.6.0"
 aiokafka = "==0.7.2"
 redis = "==4.3.4"
+influxdb-client = "*"
+websockets = "*"
 
 [dev-packages]
 

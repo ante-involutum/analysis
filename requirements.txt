@@ -13,6 +13,7 @@ fastapi==0.78.0
 h11==0.13.0
 httptools==0.4.0
 idna==3.3
+influxdb-client==1.32.0
 iniconfig==1.1.1
 kafka-python==2.0.2
 loguru==0.6.0
@@ -24,9 +25,11 @@ pycodestyle==2.9.1
 pydantic==1.9.2
 pyparsing==3.0.9
 pytest==7.1.2
+python-dateutil==2.8.2
 python-dotenv==0.20.0
 python-multipart==0.0.5
 PyYAML==6.0
+reactivex==4.0.4
 redis==4.3.4
 requests==2.28.1
 requests-toolbelt==0.9.1

@@ -11,8 +11,7 @@ from aiokafka import AIOKafkaConsumer
 tasks = {}
 bootstrap_servers = 'middleware-kafka.tink:9092'
 
-
-r = redis.Redis(
+redis_client = redis.Redis(
     host='middleware-redis-headless.tink',
     port=6379,
     decode_responses=True,
@@ -42,7 +41,7 @@ async def consume(topic):
 
 
 async def monitor():
-    for _ in r.lrange('tasks', 0, -1):
+    for _ in redis_client.lrange('tasks', 0, -1):
         f = asyncio.run_coroutine_threadsafe(
             consume(_),
             thread_loop
@@ -50,7 +49,7 @@ async def monitor():
         tasks[_] = f
         logger.info(f'restart tasks: {_}')
 
-    ps = r.pubsub()
+    ps = redis_client.pubsub()
     ps.subscribe('add', 'del')
     for msg in ps.listen():
         if msg['type'] == 'message':
