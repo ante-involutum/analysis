@@ -1,10 +1,11 @@
+import json
 from typing import List
 from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
-from src.helper import KFConsumer
 from src.env import *
+from src.helper import KFConsumer
 
 app = FastAPI(name="analysis")
 
@@ -74,7 +75,7 @@ async def websocket_endpoint(topic, websocket: WebSocket):
             data = await websocket.receive_text()
             result = c.poll(timeout=2000, max_records=int(data))
             logger.info(result)
-            await manager.send_personal_message(result, websocket)
+            await manager.send_personal_message(json.dumps(result), websocket)
     except WebSocketDisconnect:
         c.close()
         manager.disconnect(websocket)
