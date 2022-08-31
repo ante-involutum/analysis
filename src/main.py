@@ -1,6 +1,5 @@
 from typing import List
 from loguru import logger
-from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
@@ -75,44 +74,7 @@ async def websocket_endpoint(topic, websocket: WebSocket):
             data = await websocket.receive_text()
             result = c.poll(timeout=2000, max_records=int(data))
             logger.info(result)
-            await manager.send_personal_message(f"You wrote: {result}", websocket)
+            await manager.send_personal_message(result, websocket)
     except WebSocketDisconnect:
         c.close()
         manager.disconnect(websocket)
-
-
-@app.get("/analysis/")
-async def get():
-    return HTMLResponse("""
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var ws = new WebSocket("ws://127.0.0.1:8005/analysis/ws/demo-1");
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-""")

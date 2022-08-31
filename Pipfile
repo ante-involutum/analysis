@@ -17,6 +17,7 @@ aiokafka = "==0.7.2"
 redis = "==4.3.4"
 influxdb-client = "*"
 websockets = "*"
+websocket-client = "*"
 
 [dev-packages]
 
