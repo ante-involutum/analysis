@@ -57,5 +57,5 @@ spec:
           env:
             - name: KAFKA_SERVICE_HOSTS
               value: middleware-kafka.tink:9092
-            - name: KAFKA_SERVICE_HOSTS
+            - name: REDIS_SERVICE_HOSTS
               value: middleware-redis-master.tink:6379
