@@ -1,3 +1,4 @@
+import json
 import pytest
 import websocket
 from loguru import logger
@@ -11,17 +12,29 @@ class TestAnalysis():
     }
 
     def test_msg(self):
-        resp = self.bs.get('/analysis/raw/demo-1', headers=self.header)
+        payload = {
+            "_from": 0,
+            "size": 2
+        }
+        resp = self.bs.get(
+            '/analysis/raw/1',
+            headers=self.header,
+            params=payload
+        )
         assert resp.status_code == 200
 
     def test_ws(self):
+        payload = {
+            "_from": 0,
+            "size": 1
+        }
         ws = websocket.WebSocket()
         ws.connect(
-            "ws://tink.test:31695/analysis/ws/demo-1",
+            "ws://tink.test:31695/analysis/ws/1",
+            # "ws://127.0.0.1:8005/analysis/ws/1",
             header=self.header
         )
-        ws.send("1")
+        ws.send(json.dumps(payload))
         resp = ws.recv()
         logger.info(resp)
         assert ws.status == 101
-        assert 'offset' in resp

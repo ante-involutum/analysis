@@ -44,18 +44,3 @@ spec:
           ports:
             - containerPort: 8005
           imagePullPolicy: Always
-          env:
-            - name: KAFKA_SERVICE_HOSTS
-              value: middleware-kafka.tink:9092
-        - name: core
-          image: mx2542/anti-analysis:latest
-          command:
-            - "python"
-          args:
-            - "src/core.py"
-          imagePullPolicy: Always
-          env:
-            - name: KAFKA_SERVICE_HOSTS
-              value: middleware-kafka.tink:9092
-            - name: REDIS_SERVICE_HOSTS
-              value: middleware-redis-master.tink:6379

@@ -18,6 +18,7 @@ redis = "==4.3.4"
 influxdb-client = "*"
 websockets = "*"
 websocket-client = "*"
+elasticsearch = "==8.4.0"
 
 [dev-packages]
 
