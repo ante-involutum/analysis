@@ -71,11 +71,7 @@ async def kafak_msg(task_name, _from: int = 0, size: int = 10):
         },
         "from": _from,
         "size": size,
-        "sort": {
-            "timestamp": {
-                "order": "desc"
-            }
-        },
+        "sort": [],
         "aggs": {
 
         }
@@ -118,11 +114,7 @@ async def websocket_endpoint(task_name, websocket: WebSocket):
                 },
                 "from": _from,
                 "size": size,
-                "sort": {
-                    "timestamp": {
-                        "order": "desc"
-                    }
-                },
+                "sort": [],
                 "aggs": {
 
                 }
