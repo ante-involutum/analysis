@@ -33,7 +33,7 @@ async def get_raw(task_tag: str, task_name: str, _from: int = 0, size: int = 10)
     return result
 
 
-@app.websocket("/analysis/ws/{raw}")
+@app.websocket("/analysis/ws")
 async def websocket_msg(raw, websocket: WebSocket):
     await manager.connect(websocket)
     try:
