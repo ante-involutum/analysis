@@ -1,7 +1,9 @@
 import re
 import json
+from typing import List
 
 from kafka import KafkaConsumer
+from fastapi import HTTPException, WebSocket
 
 
 def time_to_float(time_str):
@@ -37,6 +39,50 @@ def msg_to_dict(msg):
             'erro': 0,
         }
     return result
+
+
+def query(es, task_name, _from, size):
+    resp = {}
+    body = {
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "term": {
+                            "task_name": task_name
+                        }
+                    },
+                    {
+                        "term": {
+                            "task_tag": "raw"
+                        }
+                    }
+                ],
+                "must_not": [
+
+                ],
+                "should": [
+
+                ]
+            }
+        },
+        "from": _from,
+        "size": size,
+        "sort": [],
+        "aggs": {
+
+        }
+    }
+    try:
+        result = es.search(index="atop", body=body)
+        total = result['hits']['total']['value']
+        hits = result['hits']['hits']
+        _sources = list(map(lambda x: x['_source'], hits))
+        resp['total'] = total
+        resp['_sources'] = _sources
+        return resp
+    except Exception as e:
+        raise HTTPException(status_code=e.meta.status, detail=e.message)
 
 
 class KFConsumer():
@@ -83,3 +129,22 @@ class KFConsumer():
 
     def close(self):
         self.c.close()
+
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def send_personal_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
+
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
