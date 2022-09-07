@@ -34,7 +34,7 @@ class TestAnalysis():
         }
         ws = websocket.WebSocket()
         ws.connect(
-            "ws://tink.test:31695/analysis/ws",
+            "ws://tink.test:31695/analysis/ws/raw",
             # "ws://127.0.0.1:8005/analysis/ws",
             header=self.header
         )
