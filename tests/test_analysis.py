@@ -34,8 +34,8 @@ class TestAnalysis():
         }
         ws = websocket.WebSocket()
         ws.connect(
-            # "ws://tink.test:31695/analysis/ws/1",
-            "ws://127.0.0.1:8005/analysis/raw",
+            "ws://tink.test:31695/analysis/ws/raw",
+            # "ws://127.0.0.1:8005/analysis/ws/raw",
             header=self.header
         )
         ws.send(json.dumps(payload))
