@@ -1,6 +1,5 @@
 import json
 from pprint import pprint
-from loguru import logger
 from elasticsearch import Elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect

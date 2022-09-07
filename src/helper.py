@@ -1,6 +1,7 @@
 import re
 import json
 from typing import List
+from loguru import logger
 
 from kafka import KafkaConsumer
 from fastapi import HTTPException, WebSocket
@@ -82,6 +83,7 @@ def query(es, task_tag, task_name, _from, size):
         resp['_sources'] = _sources
         return resp
     except Exception as e:
+        logger.info(e.error)
         raise HTTPException(status_code=e.meta.status, detail=e.message)
 
 
