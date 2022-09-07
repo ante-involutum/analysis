@@ -13,11 +13,13 @@ class TestAnalysis():
 
     def test_msg(self):
         payload = {
+            'task_name': '1',
+            'task_tag': 'raw',
             "_from": 0,
             "size": 2
         }
         resp = self.bs.get(
-            '/analysis/raw/1',
+            '/analysis/raw',
             headers=self.header,
             params=payload
         )
@@ -25,13 +27,15 @@ class TestAnalysis():
 
     def test_ws(self):
         payload = {
+            'task_name': '1',
+            'task_tag': 'raw',
             "_from": 0,
-            "size": 1
+            "size": 2
         }
         ws = websocket.WebSocket()
         ws.connect(
-            "ws://tink.test:31695/analysis/ws/1",
-            # "ws://127.0.0.1:8005/analysis/ws/1",
+            # "ws://tink.test:31695/analysis/ws/1",
+            "ws://127.0.0.1:8005/analysis/raw",
             header=self.header
         )
         ws.send(json.dumps(payload))

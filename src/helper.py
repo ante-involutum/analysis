@@ -41,7 +41,7 @@ def msg_to_dict(msg):
     return result
 
 
-def query(es, task_name, _from, size):
+def query(es, task_tag, task_name, _from, size):
     resp = {}
     body = {
         "query": {
@@ -54,7 +54,7 @@ def query(es, task_name, _from, size):
                     },
                     {
                         "term": {
-                            "task_tag": "raw"
+                            "task_tag": task_tag
                         }
                     }
                 ],

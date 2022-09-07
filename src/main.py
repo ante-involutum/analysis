@@ -26,15 +26,15 @@ es = Elasticsearch(
 manager = ConnectionManager()
 
 
-@app.get('/analysis/raw/{task_name}')
-async def msg(task_name, _from: int = 0, size: int = 10):
-    result = query(es, task_name, _from, size)
+@app.get('/analysis/raw')
+async def get_raw(task_tag: str, task_name: str, _from: int = 0, size: int = 10):
+    result = query(es, task_tag, task_name, _from, size)
     pprint(result)
     return result
 
 
-@app.websocket("/analysis/ws/{task_name}")
-async def websocket_msg(task_name, websocket: WebSocket):
+@app.websocket("/analysis/raw")
+async def websocket_msg(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
@@ -42,7 +42,9 @@ async def websocket_msg(task_name, websocket: WebSocket):
             data = json.loads(data)
             _from = data['_from']
             size = data['size']
-            result = query(es, task_name, _from, size)
+            task_tag = data['task_tag']
+            task_name = data['task_name']
+            result = query(es, task_tag, task_name, _from, size)
             pprint(result)
             await manager.send_personal_message(json.dumps(result), websocket)
     except WebSocketDisconnect:
