@@ -33,7 +33,8 @@ spec:
     spec:
       containers:
         - name: analysis
-          image: mx2542/anti-analysis:latest
+          # image: mx2542/anti-analysis:latest
+          image: {{ .Values.image }}
           command:
             - "uvicorn"
           args:
