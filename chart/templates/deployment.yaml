@@ -33,7 +33,6 @@ spec:
     spec:
       containers:
         - name: analysis
-          # image: mx2542/anti-analysis:latest
           image: {{ .Values.image }}
           command:
             - "uvicorn"
@@ -44,4 +43,4 @@ spec:
             - "--port=8005"
           ports:
             - containerPort: 8005
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy }}

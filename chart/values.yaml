@@ -1,1 +1,2 @@
-image: "mx2542/anti-analysis:latest"
+image: "mx2542/analysis:latest"
+imagePullPolicy: Always
