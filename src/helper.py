@@ -50,12 +50,12 @@ def query(es, task_tag, task_name, _from, size):
                 "must": [
                     {
                         "term": {
-                            "task_name": task_name
+                            "host.name.keyword": task_name
                         }
                     },
                     {
                         "term": {
-                            "task_tag": task_tag
+                            "tags.keyword": task_tag
                         }
                     }
                 ],
