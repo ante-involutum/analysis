@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
 from src.helper import query, ConnectionManager
+from src.env import ELASTICSEARCH_SERVICE_HOSTS
 
 
 app = FastAPI(name="analysis")
@@ -17,10 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-es = Elasticsearch(
-    hosts='http://middleware-elasticsearch-master-headless:9200'
-    # hosts='http://127.0.0.1:9200'
-)
+es = Elasticsearch(hosts=ELASTICSEARCH_SERVICE_HOSTS)
 
 manager = ConnectionManager()
 
