@@ -28,6 +28,5 @@ python_version = "3.9"
 [scripts]
 serve = "uvicorn src.main:app --reload --host=127.0.0.1 --port=8004"
 proxy = "kubectl port-forward svc/analysis 8004:8004"
-build = "docker buildx build -f Dockerfile --platform linux/amd64 -t mx2542/anti-analysis:latest . --push"
-build-dev = "docker buildx build -f Dockerfile --platform linux/amd64 -t mx2542/anti-analysis:dev . --push"
-deploy = "helm install analysis chart"
+build = "docker buildx build -f Dockerfile --platform linux/amd64 -t mx2542/analysis:1.0 . --push"
+build4qt = "docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/analysis:1.0 . --push"
