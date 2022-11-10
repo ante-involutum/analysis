@@ -14,7 +14,7 @@ class TestAnalysis():
     def test_msg(self):
         payload = {
             'task_name': '1',
-            'task_tag': 'demo',
+            'task_tag': 'aomaker',
             "_from": 0,
             "size": 2
         }
@@ -28,7 +28,7 @@ class TestAnalysis():
     def test_ws(self):
         payload = {
             'task_name': '1',
-            'task_tag': 'raw',
+            'task_tag': 'aomaker',
             "_from": 0,
             "size": 2
         }

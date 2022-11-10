@@ -26,6 +26,10 @@ manager = ConnectionManager()
 @app.get('/analysis/raw')
 async def get_raw(task_tag: str, task_name: str, _from: int = 0, size: int = 10):
     result = query(es, task_tag, task_name, _from, size)
+    messages = []
+    for i in result['_sources']:
+        messages.append(i['message'])
+    result['messages'] = messages
     pprint(result)
     return result
 
@@ -42,6 +46,10 @@ async def websocket_msg(websocket: WebSocket):
             task_tag = data['task_tag']
             task_name = data['task_name']
             result = query(es, task_tag, task_name, _from, size)
+            messages = []
+            for i in result['_sources']:
+                messages.append(i['message'])
+            result['messages'] = messages
             pprint(result)
             await manager.send_personal_message(json.dumps(result), websocket)
     except WebSocketDisconnect:
