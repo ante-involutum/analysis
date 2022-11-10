@@ -28,7 +28,7 @@ class TestAnalysis():
     def test_ws(self):
         payload = {
             'task_name': '1',
-            'task_tag': 'aomaker',
+            'task_tag': 'summary',
             "_from": 0,
             "size": 2
         }
