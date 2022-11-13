@@ -1,3 +1,5 @@
-image: "mx2542/analysis:latest"
+registry: docker.io
+repository: mx2542
+image: "analysis:latest"
 imagePullPolicy: Always
-elasticsearch_service_hosts: http://middleware-elasticsearch-master-headless:9200
+private: false
