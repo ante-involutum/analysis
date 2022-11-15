@@ -18,3 +18,4 @@ def init(request):
     url = envs[env]
     bs = BaseUrlSession(base_url=url)
     request.cls.bs = bs
+    request.cls.ws_url = 'ws://tink.test:31695/analysis/ws/raw'
