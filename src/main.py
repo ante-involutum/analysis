@@ -50,6 +50,11 @@ async def websocket_msg(websocket: WebSocket):
             for i in result['_sources']:
                 messages.append(i['message'])
             result['messages'] = messages
+
+            # just for qingtest front
+            if data.get('task_id', None) != None:
+                result['task_id'] = data['task_id']
+
             pprint(result)
             await manager.send_personal_message(json.dumps(result), websocket)
     except WebSocketDisconnect:

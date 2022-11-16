@@ -31,7 +31,8 @@ class TestAnalysis():
             'task_name': 'hpc-api-test2-65-61',
             'task_tag': 'aomaker',
             "_from": 60,
-            "size": 2
+            "size": 2,
+            # "task_id":'notings'
         }
         ws = websocket.WebSocket()
         ws.connect(
