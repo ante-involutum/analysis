@@ -75,7 +75,7 @@ def query(es, task_tag, task_name, _from, size):
         }
     }
     try:
-        result = es.search(index="atop", body=body)
+        result = es.search(index="logs", body=body)
         total = result['hits']['total']['value']
         hits = result['hits']['hits']
         _sources = list(map(lambda x: x['_source'], hits))
