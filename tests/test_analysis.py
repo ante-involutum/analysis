@@ -8,38 +8,34 @@ from pprint import pprint
 @pytest.mark.usefixtures('init')
 class TestAnalysis():
 
+    payload = {
+        'index': 'logs',
+        'key_words': {
+            'pod.name': 'db95fd',
+            'container.name': 'jmeter'
+        },
+        "from_": 0,
+        "size": 2
+    }
     header = {
         "Authorization": "admin"
     }
 
     def test_msg(self):
-        payload = {
-            'task_name': 'hpc-api-test2-65-61',
-            'task_tag': 'aomaker',
-            "_from": 0,
-            "size": 2
-        }
-        resp = self.bs.get(
+        resp = self.bs.post(
             '/analysis/raw',
             headers=self.header,
-            params=payload
+            json=self.payload
         )
         assert resp.status_code == 200
 
     def test_ws(self):
-        payload = {
-            'task_name': 'hpc-api-test2-65-61',
-            'task_tag': 'aomaker',
-            "_from": 60,
-            "size": 2,
-            # "task_id":'notings'
-        }
         ws = websocket.WebSocket()
         ws.connect(
             self.ws_url,
             header=self.header
         )
-        ws.send(json.dumps(payload))
+        ws.send(json.dumps(self.payload))
         resp = ws.recv()
         logger.info(resp)
         pprint(json.loads(resp))

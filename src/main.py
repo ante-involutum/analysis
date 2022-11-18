@@ -1,12 +1,11 @@
 import json
 from pprint import pprint
-from elasticsearch import Elasticsearch
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from src.model import Query
 
-from src.helper import query, ConnectionManager
+from src.helper import ConnectionManager, EsHelper
 from src.env import ELASTICSEARCH_SERVICE_HOSTS
-
 
 app = FastAPI(name="analysis")
 
@@ -18,19 +17,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-es = Elasticsearch(hosts=ELASTICSEARCH_SERVICE_HOSTS)
-
 manager = ConnectionManager()
+es = EsHelper(ELASTICSEARCH_SERVICE_HOSTS)
 
 
-@app.get('/analysis/raw')
-async def get_raw(task_tag: str, task_name: str, _from: int = 0, size: int = 10):
-    result = query(es, task_tag, task_name, _from, size)
-    messages = []
-    for i in result['_sources']:
-        messages.append(i['message'])
-    result['messages'] = messages
+@app.post('/analysis/raw')
+async def get_raw(q: Query):
+
+    result = es.search_logs(q.index, q.key_words, q.from_, q.size)
     pprint(result)
+
     return result
 
 
@@ -40,16 +36,14 @@ async def websocket_msg(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
+
             data = json.loads(data)
-            _from = data['_from']
+            _from = data['from_']
             size = data['size']
-            task_tag = data['task_tag']
-            task_name = data['task_name']
-            result = query(es, task_tag, task_name, _from, size)
-            messages = []
-            for i in result['_sources']:
-                messages.append(i['message'])
-            result['messages'] = messages
+            index = data['index']
+            key_words = data['key_words']
+
+            result = es.search_logs(index, key_words, _from, size)
 
             # just for qingtest front
             if data.get('task_id', None) != None:
