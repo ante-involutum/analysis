@@ -11,8 +11,9 @@ class TestAnalysis():
     payload = {
         'index': 'logs',
         'key_words': {
-            'pod.name': 'db95fd',
-            'container.name': 'jmeter'
+            'pod.name': '1',
+            'container.name': 'aomaker',
+            'labels.uid': 'a472e5d8-88da-4686-a0d6-f7afc7fbdd37'
         },
         "from_": 0,
         "size": 2
