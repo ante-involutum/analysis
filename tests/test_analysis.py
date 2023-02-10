@@ -11,12 +11,12 @@ class TestAnalysis():
     payload = {
         'index': 'logs',
         'key_words': {
-            'pod.name': '1',
+            'pod.name': 'lunz',
             'container.name': 'aomaker',
-            'labels.uid': 'a472e5d8-88da-4686-a0d6-f7afc7fbdd37'
+            'labels.uid': '5a9a414b-84fa-477c-8701-557a1d40a38e'
         },
         "from_": 0,
-        "size": 2
+        "size": 20
     }
     header = {
         "Authorization": "admin"

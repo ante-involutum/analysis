@@ -66,7 +66,7 @@ class EsHelper():
             messages.append(i['message'])
 
         resp['total'] = total
-        resp['_sources'] = _sources
+        # resp['_sources'] = _sources
         resp['messages'] = messages
         return resp
 
