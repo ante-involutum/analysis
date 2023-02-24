@@ -11,12 +11,13 @@ class TestAnalysis():
     payload = {
         'index': 'logs',
         'key_words': {
-            'pod.name': 'lunz',
+            'pod.name': 'lunz233',
             'container.name': 'aomaker',
-            'labels.uid': '5a9a414b-84fa-477c-8701-557a1d40a38e'
+            'labels.uid': '741b0b32-1d9e-4dac-86ea-8bc32493f67c'
         },
         "from_": 0,
-        "size": 20
+        "size": 20,
+        "offset": [1676991917964, 'CCSCdIYB_m0N6VTGB8OO']
     }
     header = {
         "Authorization": "admin"
@@ -28,6 +29,7 @@ class TestAnalysis():
             headers=self.header,
             json=self.payload
         )
+        pprint(resp.json())
         assert resp.status_code == 200
 
     def test_ws(self):
@@ -38,6 +40,5 @@ class TestAnalysis():
         )
         ws.send(json.dumps(self.payload))
         resp = ws.recv()
-        logger.info(resp)
         pprint(json.loads(resp))
         assert ws.status == 101

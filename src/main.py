@@ -24,9 +24,8 @@ es = EsHelper(ELASTICSEARCH_SERVICE_HOSTS)
 @app.post('/analysis/raw')
 async def get_raw(q: Query):
 
-    result = es.search_logs(q.index, q.key_words, q.from_, q.size)
+    result = es.search(q.index, q.key_words, q.from_, q.size, q.offset)
     pprint(result)
-
     return result
 
 
@@ -36,20 +35,23 @@ async def websocket_msg(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-
             data = json.loads(data)
-            _from = data['from_']
+            pprint(data)
+            
+            _from = data.get('from_', 0)
             size = data['size']
             index = data['index']
             key_words = data['key_words']
+            offset = data.get('offset', None)
 
-            result = es.search_logs(index, key_words, _from, size)
+            result = es.search(index, key_words, _from, size, offset)
 
             # just for qingtest front
             if data.get('task_id', None) != None:
                 result['task_id'] = data['task_id']
 
-            pprint(result)
-            await manager.send_personal_message(json.dumps(result), websocket)
+            resp = json.dumps(result, ensure_ascii=False)
+            pprint(resp)
+            await manager.send_personal_message(resp, websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)

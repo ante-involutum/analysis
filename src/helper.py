@@ -30,19 +30,17 @@ class EsHelper():
         result = self.client.update(index=index, id=id, doc=doc)
         return result
 
-    def search(self, index, key_words, _from, size, type='must', mod='term'):
-        q = self.build_query(key_words, _from, size, type=type, mod=mod)
-        result = self.client.search(index=index, body=q)
-        return result
-
-    def build_query(self, key_words, _from, size, type='must', mod='term'):
+    def search(self, index, key_words, _from, size, search_after, type='must', mod='term'):
         q = {
             'query': {
                 'bool': {}
             },
-            "sort": [],
-            "aggs": {
-            }}
+            "sort": [{
+                "@timestamp": "asc",
+                "_id": "asc",
+            }],
+            "aggs": {}
+        }
         q['from'] = _from
         q['size'] = size
         q['query']['bool'][type] = []
@@ -53,23 +51,34 @@ class EsHelper():
                         f'{k}.keyword': v}
                 }
             )
-        return q
 
-    def search_logs(self, index, key_words, _from, size, type='must', mod='term'):
+        result = self.client.search(
+            index=index,
+            body=q,
+            search_after=search_after
+        )
         resp = {}
         messages = []
-        result = self.search(index, key_words, _from, size, type=type, mod=mod)
-        total = result['hits']['total']['value']
+        # total = result['hits']['total']['value']
         hits = result['hits']['hits']
         _sources = list(map(lambda x: x['_source'], hits))
+        sort = list(map(lambda x: x['sort'], hits))
+
         for i in _sources:
             messages.append(i['message'])
 
-        resp['total'] = total
+        # resp['total'] = total
         # resp['_sources'] = _sources
         resp['messages'] = messages
-        return resp
+        total = len(messages)
+        resp['total'] = total
 
+        if total == 0:
+            resp['offset'] = []
+        else:
+            resp['offset'] = sort[-1]
+
+        return resp
 
 class ConnectionManager:
     def __init__(self):
