@@ -1,5 +1,5 @@
 import json
-from pprint import pprint
+from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from src.model import Query
@@ -23,9 +23,9 @@ es = EsHelper(ELASTICSEARCH_SERVICE_HOSTS)
 
 @app.post('/analysis/raw')
 async def get_raw(q: Query):
-
+    logger.info(q)
     result = es.search(q.index, q.key_words, q.from_, q.size, q.offset)
-    pprint(result)
+    logger.info(result)
     return result
 
 
@@ -36,8 +36,8 @@ async def websocket_msg(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             data = json.loads(data)
-            pprint(data)
-            
+            logger.info(data)
+
             _from = data.get('from_', 0)
             size = data['size']
             index = data['index']
@@ -51,7 +51,7 @@ async def websocket_msg(websocket: WebSocket):
                 result['task_id'] = data['task_id']
 
             resp = json.dumps(result, ensure_ascii=False)
-            pprint(resp)
+            logger.info(resp)
             await manager.send_personal_message(resp, websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)

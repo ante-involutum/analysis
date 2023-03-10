@@ -69,15 +69,13 @@ class EsHelper():
 
         # resp['total'] = total
         # resp['_sources'] = _sources
-        resp['messages'] = messages
         total = len(messages)
         resp['total'] = total
-
         if total == 0:
             resp['offset'] = []
         else:
             resp['offset'] = sort[-1]
-
+        resp['messages'] = messages
         return resp
 
 class ConnectionManager:
