@@ -60,20 +60,17 @@ class EsHelper():
         )
         resp = {}
         messages = []
-        # total = result['hits']['total']['value']
         hits = result['hits']['hits']
         _sources = list(map(lambda x: x['_source'], hits))
         sort = list(map(lambda x: x['sort'], hits))
 
         for i in _sources:
             messages.append(i['message'])
-
-        # resp['total'] = total
-        # resp['_sources'] = _sources
+            
         total = len(messages)
         resp['total'] = total
         if total == 0:
-            resp['offset'] = []
+            resp['offset'] = None
         else:
             resp['offset'] = sort[-1]
         resp['messages'] = messages
