@@ -1,7 +1,8 @@
 from typing import List
 from loguru import logger
-from elasticsearch import Elasticsearch
 from fastapi import WebSocket
+from elasticsearch import Elasticsearch
+from prometheus_client import CollectorRegistry, Gauge, generate_latest
 
 
 class EsHelper():
@@ -78,6 +79,7 @@ class EsHelper():
         resp['messages'] = messages
         return resp
 
+
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
@@ -95,3 +97,19 @@ class ConnectionManager:
     async def broadcast(self, message: str):
         for connection in self.active_connections:
             await connection.send_text(message)
+
+
+class PrometheusHekper():
+
+    def __init__(self) -> None:
+
+        self.registry = CollectorRegistry()
+        self.tink_task_status = Gauge(
+            'tink_task_status',
+            'pod status by tink created',
+            ['name', 'type', 'namespace'],
+            registry=self.registry
+        )
+
+    def generate_latest(self):
+        return generate_latest(self.registry)
