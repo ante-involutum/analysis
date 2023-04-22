@@ -18,5 +18,5 @@ class Query(BaseModel):
     @validator("key_words")
     def key_word_must_contain_k8s_labels_app(cls, v):
         if 'kubernetes.labels.app' not in v:
-            raise ValueError("key_word must contain 'kubernetes.labels.app'")
+            raise ValueError("key_words must contain 'kubernetes.labels.app'")
         return v
