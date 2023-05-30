@@ -15,8 +15,8 @@ class Query(BaseModel):
             raise ValueError("index must be 'logs'")
         return v
 
-    @validator("key_words")
-    def key_word_must_contain_k8s_labels_app(cls, v):
-        if 'kubernetes.labels.app' not in v:
-            raise ValueError("key_words must contain 'kubernetes.labels.app'")
-        return v
+    # @validator("key_words")
+    # def key_word_must_contain_k8s_labels_app(cls, v):
+    #     if 'kubernetes.labels.app' not in v:
+    #         raise ValueError("key_words must contain 'kubernetes.labels.app'")
+    #     return v
