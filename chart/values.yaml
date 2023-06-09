@@ -1,5 +1,3 @@
-registry: docker.io
-repository: mx2542
-image: "analysis:latest"
-imagePullPolicy: Always
-private: false
+registry: dockerhub.qingcloud.com
+repository: qingtest
+image: analysis:1.4
