@@ -9,11 +9,11 @@ class Query(BaseModel):
     key_words: Dict[str, str]
     offset: Union[List[str], None] = None
 
-    @validator("index")
-    def index_must_be_logs(cls, v):
-        if v != "logs":
-            raise ValueError("index must be 'logs'")
-        return v
+    # @validator("index")
+    # def index_must_be_logs(cls, v):
+    #     if v != "logs":
+    #         raise ValueError("index must be 'logs'")
+    #     return v
 
     # @validator("key_words")
     # def key_word_must_contain_k8s_labels_app(cls, v):

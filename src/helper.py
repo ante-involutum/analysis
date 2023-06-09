@@ -1,14 +1,23 @@
 from typing import List
+from pprint import pprint
 from loguru import logger
+from requests import Session
 from fastapi import WebSocket
 from elasticsearch import Elasticsearch
 from prometheus_client import CollectorRegistry, Gauge, generate_latest
 
 
+from src.env import ELASTICSEARCH_SERVICE_HOSTS
+from src.env import KS_SERVICE_HOSTS
+from src.env import KS_SERVICE_USER
+from src.env import KS_SERVICE_PWD
+from src.env import NAMESPACE
+
+
 class EsHelper():
 
-    def __init__(self, host) -> None:
-        self.host = host
+    def __init__(self) -> None:
+        self.host = ELASTICSEARCH_SERVICE_HOSTS
         self.client = Elasticsearch(self.host)
 
     def index(self, index):
@@ -66,7 +75,7 @@ class EsHelper():
 
         for i in _sources:
             messages.append(i['message'])
-            
+
         total = len(messages)
         resp['total'] = total
         if total == 0:
@@ -110,3 +119,73 @@ class PrometheusHekper():
 
     def generate_latest(self):
         return generate_latest(self.registry)
+
+
+class KsHelper():
+
+    def __init__(self) -> None:
+        self.svc = KS_SERVICE_HOSTS
+        self.user = KS_SERVICE_USER
+        self.pwd = KS_SERVICE_PWD
+        self.is_auth = None
+        self.session = Session()
+
+    def auth(self):
+        payload = {
+            'grant_type': 'password',
+            'username': self.user,
+            'password': self.pwd,
+            'client_id': 'kubesphere',
+            'client_secret': 'kubesphere',
+        }
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        resp = self.session.post(
+            f'{self.svc}/oauth/token',
+            data=payload,
+            headers=headers
+        )
+        resp = resp.json()
+        access_token = resp['access_token']
+        self.session.headers['Authorization'] = f'Bearer {access_token}'
+        self.is_auth = True
+
+    def get_logs(self, pod, container, from_, size):
+        payload = {
+            'operation': 'query',
+            'log_query': '',
+            'pods': pod,
+            'containers': container,
+            'from': from_,
+            'size': size,
+            'interval': '1d',
+            'sort': 'asc',
+            # 'sort': 'desc',
+            'namespaces': NAMESPACE
+        }
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        resp = self.session.get(
+            f'{self.svc}/kapis/tenant.kubesphere.io/v1alpha2/logs',
+            params=payload,
+            headers=headers
+        )
+        resp = resp.json()
+        return resp
+
+    def fmt(self, resp):
+        result = {}
+        messages = []
+
+        records = resp.get('query', {}).get('records', None)
+        if records is None:
+            pass
+        else:
+            for x in records:
+                messages.append(x['log'])
+
+        result['messages'] = messages
+        result['total'] = len(messages)
+        return result

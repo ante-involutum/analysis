@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "139c865121249040d14fa562f6190a2472cf9753676007db6172300b3b2298c9"
+            "sha256": "335210a40c50ca3c4106b9661a02e48aba7ab73c939d3266769f5750f517591c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -125,11 +125,11 @@
         },
         "elasticsearch": {
             "hashes": [
-                "sha256:b97649ea57296715f98947e8ecc987c8363f0fd09782a7206cc69e0ff0b03b9e",
-                "sha256:f7ef925d8dd90922be82a328b20c31cdc8b48af3161bbc2eaa03b65f85668999"
+                "sha256:2223ee9daaa3c80c25b28ec3f7c48e66fce6b767a338333d9a81886046a07df6",
+                "sha256:6878313cd598c7c90079fed1d4be72e198da35cba57f4083e6bee91f9c70b0eb"
             ],
             "index": "pypi",
-            "version": "==8.4.0"
+            "version": "==8.8.0"
         },
         "fastapi": {
             "hashes": [
@@ -412,11 +412,11 @@
         },
         "requests": {
             "hashes": [
-                "sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983",
-                "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"
+                "sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f",
+                "sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1"
             ],
             "index": "pypi",
-            "version": "==2.28.1"
+            "version": "==2.31.0"
         },
         "requests-toolbelt": {
             "hashes": [
@@ -428,11 +428,11 @@
         },
         "setuptools": {
             "hashes": [
-                "sha256:16ccf598aab3b506593c17378473978908a2734d7336755a8769b480906bec1c",
-                "sha256:b440ee5f7e607bb8c9de15259dba2583dd41a38879a7abc1d43a71c59524da48"
+                "sha256:5df61bf30bb10c6f756eb19e7c9f3b473051f48db77fddbe06ff2ca307df9a6f",
+                "sha256:62642358adc77ffa87233bc4d2354c4b2682d214048f500964dbe760ccedf102"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==67.2.0"
+            "version": "==67.8.0"
         },
         "six": {
             "hashes": [

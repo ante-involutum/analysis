@@ -53,3 +53,11 @@ spec:
                 configMapKeyRef:
                   name: atop-globe-config
                   key: elasticsearch_service_hosts
+            - name: KS_SERVICE_HOSTS
+              value: http://ks-apiserver.kubesphere-system.svc:80
+            - name: KS_SERVICE_USER
+              value: admin
+            - name: KS_SERVICE_PWD
+              value: Zhu88jie!
+            - name: NAMESPACE
+              value: {{ .Release.Namespace | quote }}
