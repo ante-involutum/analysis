@@ -58,12 +58,12 @@ class EsHelper():
             q['query']['bool'][type].append(
                 {
                     mod: {
-                        f'{k}.keyword': v}
+                        k: v}
                 }
             )
 
         result = self.client.search(
-            index=index,
+            index=f'{index}-*',
             body=q,
             search_after=search_after
         )

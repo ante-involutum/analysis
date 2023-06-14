@@ -8,11 +8,11 @@ from pprint import pprint
 class TestAnalysis():
 
     payload = {
-        'index': 'logs',
+        'index': 'atop',
         'key_words': {
-            # 'kubernetes.labels.uid': '091143e5-464e-4704-8438-04ecc98f4b1a',
-            'pod.name': 'zhou',
+            'pod.name': 'test',
             'container.name': 'aomaker',
+            'kubernetes.labels.uid': '091143e5-464e-4704-8438-04ecc98f4b1a',
         },
         "from_": 0,
         "size": 200,
