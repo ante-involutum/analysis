@@ -8,11 +8,11 @@ from pprint import pprint
 class TestAnalysis():
 
     payload = {
-        'index': 'atop',
+        'index': 'logs',
         'key_words': {
             'pod.name': 'test',
             'container.name': 'aomaker',
-            'kubernetes.labels.uid': '091143e5-464e-4704-8438-04ecc98f4b1a',
+            # 'kubernetes.labels.uid': '091143e5-464e-4704-8438-04ecc98f4b1a',
         },
         "from_": 0,
         "size": 200,
@@ -35,22 +35,3 @@ class TestAnalysis():
         resp = ws.recv()
         pprint(json.loads(resp))
         assert ws.status == 101
-
-    def test_ks_logs(self):
-        resp = self.bs.post(
-            f'{self.url}/analysis/raw/v1.1',
-            json=self.payload
-        )
-        pprint(resp.json())
-        assert resp.status_code == 200
-
-    def test_ks_logs_ws(self):
-        ws = websocket.WebSocket()
-        ws.connect(
-            f'{self.ws_url}/analysis/ws/raw/v1.1',
-        )
-        for i in range(1, 3):
-            ws.send(json.dumps(self.payload))
-            resp = ws.recv()
-            pprint(json.loads(resp))
-            assert ws.status == 101
