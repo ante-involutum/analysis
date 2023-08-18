@@ -6,4 +6,4 @@ chart_name=$(helm show chart chart | awk '/^name:/ {print $2}')
 echo image name: $chart_name
 echo image tag: $chart_appVersion
 
-docker buildx build -f Dockerfile --platform linux/amd64 -t dockerhub.qingcloud.com/qingtest/$chart_name:$chart_appVersion . --push
+docker buildx build -f Dockerfile --platform linux/amd64 -t docker.io/mx2542/$chart_name:$chart_appVersion . --push

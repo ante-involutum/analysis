@@ -30,8 +30,8 @@ spec:
       labels:
         app: "{{ .Release.Name }}-{{ .Chart.Name }}"
     spec:
-      imagePullSecrets:
-        - name: regcred
+      # imagePullSecrets:
+        # - name: regcred
       containers:
         - name: "{{ .Release.Name }}-{{ .Chart.Name }}"
           image: "{{ .Values.registry }}/{{ .Values.repository }}/{{ .Values.image }}:{{ .Chart.AppVersion }}"
