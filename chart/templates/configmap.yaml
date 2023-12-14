@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: analysis-config
+data:
+  ELASTICSEARCH_SERVICE_HOSTS: "http://{{ .Release.Name }}-elasticsearch-master-headless.{{ .Release.Namespace }}:9200"

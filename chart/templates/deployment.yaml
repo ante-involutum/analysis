@@ -1,12 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: "{{ .Release.Name }}-{{ .Chart.Name }}"
+  name: "{{ .Release.Name }}"
   labels:
-    app: "{{ .Release.Name }}-{{ .Chart.Name }}"
+    app: "{{ .Release.Name }}"
 spec:
   selector:
-    app: "{{ .Release.Name }}-{{ .Chart.Name }}"
+    app: "{{ .Release.Name }}"
   ports:
     - protocol: TCP
       name: http
@@ -17,23 +17,23 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "{{ .Release.Name }}-{{ .Chart.Name }}"
+  name: "{{ .Release.Name }}"
   labels:
-    app: "{{ .Release.Name }}-{{ .Chart.Name }}"
+    app: "{{ .Release.Name }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: "{{ .Release.Name }}-{{ .Chart.Name }}"
+      app: "{{ .Release.Name }}"
   template:
     metadata:
       labels:
-        app: "{{ .Release.Name }}-{{ .Chart.Name }}"
+        app: "{{ .Release.Name }}"
     spec:
       # imagePullSecrets:
-        # - name: regcred
+      # - name: regcred
       containers:
-        - name: "{{ .Release.Name }}-{{ .Chart.Name }}"
+        - name: "{{ .Release.Name }}"
           image: "{{ .Values.registry }}/{{ .Values.repository }}/{{ .Values.image }}:{{ .Chart.AppVersion }}"
           command:
             - "uvicorn"
@@ -51,13 +51,5 @@ spec:
             - name: ELASTICSEARCH_SERVICE_HOSTS
               valueFrom:
                 configMapKeyRef:
-                  name: atop-globe-config
-                  key: elasticsearch_service_hosts
-            - name: KS_SERVICE_HOSTS
-              value: http://ks-apiserver.kubesphere-system.svc:80
-            - name: KS_SERVICE_USER
-              value: admin
-            - name: KS_SERVICE_PWD
-              value: Zhu88jie!
-            - name: NAMESPACE
-              value: {{ .Release.Namespace | quote }}
+                  name: analysis-config
+                  key: ELASTICSEARCH_SERVICE_HOSTS

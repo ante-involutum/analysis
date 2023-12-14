@@ -10,17 +10,24 @@ class TestAnalysis():
     payload = {
         'index': 'logs',
         'key_words': {
-            'pod.name': 'test',
-            'container.name': 'aomaker',
-            # 'kubernetes.labels.uid': '091143e5-464e-4704-8438-04ecc98f4b1a',
+            'kubernetes.pod.name': '06be8094-265b-49c9-a156-7b8982004272',
+            'kubernetes.container.name': 'aomaker',
+            # 'kubernetes.container.name': 'sidecar',
         },
         "from_": 0,
         "size": 200,
     }
 
+    def test_get_version(self):
+        resp = self.bs.get(
+            f'{self.url}/v1.0/version'
+        )
+        pprint(resp.json())
+        assert resp.status_code == 200
+
     def test_es_log(self):
         resp = self.bs.post(
-            f'{self.url}/analysis/raw',
+            f'{self.url}/v1.0/raw',
             json=self.payload
         )
         pprint(resp.json())
@@ -29,7 +36,7 @@ class TestAnalysis():
         self.payload['offset'] = resp.json()['offset']
         ws = websocket.WebSocket()
         ws.connect(
-            f'{self.ws_url}/analysis/ws/raw',
+            f'{self.ws_url}/v1.0/ws/raw',
         )
         ws.send(json.dumps(self.payload))
         resp = ws.recv()
