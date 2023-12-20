@@ -1,3 +1,4 @@
+import yaml
 import json
 import traceback
 from loguru import logger
@@ -33,7 +34,31 @@ async def startup_event():
         logger.error(traceback.format_exc())
 
 
-@app.post('/analysis/raw')
+@app.get("/v1.0/version")
+async def version():
+    try:
+        with open('chart/Chart.yaml') as f:
+            chart = yaml.safe_load(f)
+            del chart['apiVersion']
+            chart_json = json.dumps(chart)
+            logger.info(chart_json)
+        return chart_json
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.get("/v1.0/metrics")
+async def metrics():
+    logger.info()
+    try:
+        pass
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail='内部错误')
+
+
+@app.post('/v1.0/raw')
 async def get_logs_from_es(q: Query):
     try:
         logger.info(q)
@@ -46,7 +71,7 @@ async def get_logs_from_es(q: Query):
         raise HTTPException(status_code=500, detail='内部错误')
 
 
-@app.websocket("/analysis/ws/raw")
+@app.websocket("/v1.0/ws/raw")
 async def websocket_logs_from_es(websocket: WebSocket):
     await manager.connect(websocket)
     try:
