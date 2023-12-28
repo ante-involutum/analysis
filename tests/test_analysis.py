@@ -10,7 +10,7 @@ class TestAnalysis():
     payload = {
         'index': 'logs',
         'key_words': {
-            'pod.name': 'test',
+            'pod.name': 'qingcloud-autotest-2951-5aa237ae-7d6e-46a4-bbd6-423110ea0231',
             'container.name': 'aomaker',
             # 'kubernetes.labels.uid': '091143e5-464e-4704-8438-04ecc98f4b1a',
         },

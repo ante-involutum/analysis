@@ -39,7 +39,7 @@ class EsHelper():
             },
             "sort": [{
                 "@timestamp": "asc",
-                "_id": "asc",
+                # "_id": "asc",
             }],
             "aggs": {}
         }
