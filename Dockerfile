@@ -1,4 +1,4 @@
-FROM python:3.9.12-slim
+FROM python:3.12.3-slim
 
 WORKDIR /analysis
 
@@ -6,8 +6,6 @@ COPY . /analysis
 
 EXPOSE 8005
 
-RUN pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple
+RUN pip install -r requirements.txt
 
-CMD ["uvicorn","src.main:app","--reload","--port=8005","--host=0.0.0.0" ]
-
-
+CMD ["uvicorn","src.main:app","--port=8005","--log-level=info","--host=0.0.0.0" ]
