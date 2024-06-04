@@ -1,16 +1,23 @@
 import json
+import logging
 import traceback
-from loguru import logger
+
 from fastapi import FastAPI
 from fastapi import WebSocket
 from fastapi import HTTPException
 from fastapi import WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
+from elasticsearch_dsl import Search, Q
+from elasticsearch import ApiError, Elasticsearch
+
+
 from src.model import Query
-from src.helper import ConnectionManager, EsHelper
+from src.utils import ConnectionManager
+from src.env import ELASTICSEARCH_SERVICE_HOSTS
 
 app = FastAPI(name="analysis")
+logger = logging.getLogger("uvicorn.error")
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,7 +28,7 @@ app.add_middleware(
 )
 
 manager = ConnectionManager()
-es = EsHelper()
+es = Elasticsearch(ELASTICSEARCH_SERVICE_HOSTS)
 
 
 @app.on_event("startup")
@@ -29,50 +36,108 @@ async def startup_event():
     try:
         pass
     except Exception as e:
-        logger.debug(e)
         logger.error(traceback.format_exc())
 
 
-@app.post('/analysis/raw')
-async def get_logs_from_es(q: Query):
+@app.post("/analysis/raw")
+async def get_logs_with_http(q: Query):
     try:
-        logger.info(q)
-        result = es.search(q.index, q.key_words, q.from_, q.size, q.offset)
-        logger.info(result)
-        return result
-    except Exception as e:
-        logger.debug(e)
+        logger.debug(q)
+        s = Search(using=es, index="filebeat-*").extra(size=q.size)
+
+        if q.offset != None:
+            s = s.extra(search_after=q.offset)
+        else:
+            if q.from_ != None:
+                s = s.extra(from_=q.from_)
+
+        s = s.query(
+            "bool",
+            must=[Q("term", **{k: v}) for k, v in q.key_words.items()],
+        )
+
+        s = s.sort({"@timestamp": {"order": "asc"}})
+        response = s.execute()
+        total = response.hits.total.value
+
+        resp = {}
+        hits = [hit.to_dict() for hit in response]
+        messages = [hit.get("message") for hit in hits]
+        resp["total"] = total
+        resp["messages"] = messages
+
+        if len(messages) == 0:
+            resp["offset"] = q.offset
+        else:
+            resp["offset"] = list(response.hits.hits[-1].sort)
+
+        logger.debug(resp)
+        return resp
+
+    except ApiError as e:
         logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail='内部错误')
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail="内部错误")
 
 
 @app.websocket("/analysis/ws/raw")
-async def websocket_logs_from_es(websocket: WebSocket):
+async def get_logs_with_ws(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
             data = await websocket.receive_text()
             data = json.loads(data)
-            logger.info(data)
+            logger.debug(data)
 
-            _from = data.get('from_', 0)
-            size = data['size']
-            index = data['index']
-            key_words = data['key_words']
-            offset = data.get('offset', None)
+            size = data.get("size")
+            from_ = data.get("from_")
+            offset = data.get("offset")
+            key_words = data.get("key_words")
 
-            result = es.search(index, key_words, _from, size, offset)
+            s = Search(using=es, index="filebeat-*").extra(size=size)
 
-            # just for qingtest front
-            if data.get('task_id', None) != None:
-                result['task_id'] = data['task_id']
+            if offset != None:
+                s = s.extra(search_after=offset)
+            else:
+                if from_ != None:
+                    s = s.extra(from_=from_)
 
-            resp = json.dumps(result, ensure_ascii=False)
-            logger.info(resp)
-            await manager.send_personal_message(resp, websocket)
+            s = s.query(
+                "bool",
+                must=[Q("term", **{k: v}) for k, v in key_words.items()],
+            )
+
+            s = s.sort({"@timestamp": {"order": "asc"}})
+            response = s.execute()
+            total = response.hits.total.value
+
+            result = {}
+            hits = [hit.to_dict() for hit in response]
+            messages = [hit.get("message") for hit in hits]
+            result["total"] = total
+            result["messages"] = messages
+
+            if len(messages) == 0:
+                result["offset"] = offset
+            else:
+                result["offset"] = list(response.hits.hits[-1].sort)
+
+            if data.get("task_id") != None:
+                result["task_id"] = data["task_id"]
+
+            logger.debug(result)
+            await manager.send_personal_message(result, websocket)
+
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-    except Exception as e:
-        logger.debug(e)
+
+    except ApiError as e:
         logger.error(traceback.format_exc())
-        raise HTTPException(status_code=500, detail='内部错误')
+        raise HTTPException(status_code=e.status_code, detail=e.message)
+
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail="内部错误")
