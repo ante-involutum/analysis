@@ -31,14 +31,6 @@ manager = ConnectionManager()
 es = Elasticsearch(ELASTICSEARCH_SERVICE_HOSTS)
 
 
-@app.on_event("startup")
-async def startup_event():
-    try:
-        pass
-    except Exception as e:
-        logger.error(traceback.format_exc())
-
-
 @app.post("/analysis/raw")
 async def get_logs_with_http(q: Query):
     try:
