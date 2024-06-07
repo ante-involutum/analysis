@@ -1,4 +1,5 @@
 import json
+import time
 import pytest
 import websocket
 
@@ -9,11 +10,12 @@ class TestAnalysis:
     payload = {
         "index": "logs",
         "key_words": {
-            "pod.name": "qingcloud-autotest-task4557",
+            "pod.name": "qingcloud-autotest-4606-b7b54a3a-ce44-45bf-a9ce-2e2cedcfe014",
             "container.name": "aomaker",
+            "labels.uid": "5f20c0eb-26e2-491d-98fd-d6256cb3398a",
         },
         "from_": 0,
-        "size": 200,
+        "size": 20,
         # "offset": [1717113612433],
         # "offset": [1717116041813],
     }
@@ -30,4 +32,5 @@ class TestAnalysis:
             resp = ws.recv()
             assert ws.status == 101
             resp = json.loads(resp)
-            self.payload['offset'] = resp.get('offset')
+            self.payload["offset"] = resp.get("offset")
+            time.sleep(30)

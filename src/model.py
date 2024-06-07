@@ -7,7 +7,7 @@ class Query(BaseModel):
     from_: Union[int, None] = 0
     size: Union[int, None] = 10
     key_words: Dict[str, str]
-    offset: Union[List[str], None] = None
+    offset: Union[List[int], None] = None
 
     @model_validator(mode='before')
     def check_from_offset(cls, values):

@@ -61,7 +61,8 @@ async def get_logs_with_http(q: Query):
         if len(messages) == 0:
             resp["offset"] = q.offset
         else:
-            resp["offset"] = list(response.hits.hits[-1].sort)
+            offset = response.hits.hits[-1].sort.to_list()
+            resp["offset"] = offset
 
         logger.debug(resp)
         return resp
@@ -82,7 +83,6 @@ async def get_logs_with_ws(websocket: WebSocket):
         while True:
             data = await websocket.receive_text()
             data = json.loads(data)
-            logger.debug(data)
 
             size = data.get("size")
             from_ = data.get("from_")
@@ -115,12 +115,12 @@ async def get_logs_with_ws(websocket: WebSocket):
             if len(messages) == 0:
                 result["offset"] = offset
             else:
-                result["offset"] = list(response.hits.hits[-1].sort)
+                offset = response.hits.hits[-1].sort.to_list()
+                result["offset"] = offset
 
             if data.get("task_id") != None:
                 result["task_id"] = data["task_id"]
 
-            logger.debug(result)
             await manager.send_personal_message(result, websocket)
 
     except WebSocketDisconnect:
