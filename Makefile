@@ -10,7 +10,7 @@ build:
 	docker buildx build -f Dockerfile --platform linux/amd64 -t no8ge/$(CHART_NAME):$(APPVERSION) . --push
 
 package:
-	helm package deploy/chart 
+	helm package chart 
 	helm push $(CHART_NAME)-*.tgz  oci://registry-1.docker.io/no8ge
 	rm -f $(CHART_NAME)-*.tgz
 
