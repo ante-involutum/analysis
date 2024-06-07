@@ -11,6 +11,7 @@ pytest = "*"
 requests = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 websockets = "*"
+websocket-client = "*"
 websocket = "*"
 
 [dev-packages]
