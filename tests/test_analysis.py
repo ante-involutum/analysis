@@ -1,18 +1,25 @@
 import json
 import time
-import pytest
 import websocket
+from requests import Session
 
 
-@pytest.mark.usefixtures("init")
 class TestAnalysis:
+
+    bs = Session()
+    bs.headers["Authorization"] = "admin"
+    bs.headers["x_atop_version"] = "1.0.10"
+
+    url = f"http://127.0.0.1:8005"
+    # url = f"http://172.16.60.10:31690/apis/analysis"
+    # ws_url = f"ws://172.16.60.10:31690/apis/analysis"
 
     payload = {
         "index": "logs",
         "key_words": {
-            "pod.name": "qingcloud-autotest-4606-b7b54a3a-ce44-45bf-a9ce-2e2cedcfe014",
+            "pod.name": "aomaker-4bf580d6-53e1-4cf0-b0ef-1ec9b675e3f31",
             "container.name": "aomaker",
-            "labels.uid": "5f20c0eb-26e2-491d-98fd-d6256cb3398a",
+            "labels.uid": "4bf580d6-53e1-4cf0-b0ef-1ec9b675e3f31",
         },
         "from_": 0,
         "size": 20,
@@ -21,12 +28,12 @@ class TestAnalysis:
     }
 
     def test_http_log(self):
-        resp = self.bs.post(f"{self.url}/analysis/raw", json=self.payload)
+        resp = self.bs.post(f"{self.url}/logs", json=self.payload)
         assert resp.status_code == 200
 
     def test_ws_log(self):
-        ws = websocket.WebSocket()
-        ws.connect(f"{self.ws_url}/analysis/ws/raw")
+        headers = {"Authorization": "admin", "x-atop-version": "1.0.10"}
+        ws = websocket.create_connection(f"{self.ws_url}/logs/ws", header=headers)
         while True:
             ws.send(json.dumps(self.payload))
             resp = ws.recv()

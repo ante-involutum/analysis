@@ -31,7 +31,7 @@ manager = ConnectionManager()
 es = Elasticsearch(ELASTICSEARCH_SERVICE_HOSTS)
 
 
-@app.post("/analysis/raw")
+@app.post("/logs")
 async def get_logs_with_http(q: Query):
     try:
         logger.debug(q)
@@ -76,7 +76,7 @@ async def get_logs_with_http(q: Query):
         raise HTTPException(status_code=500, detail="内部错误")
 
 
-@app.websocket("/analysis/ws/raw")
+@app.websocket("/logs/ws")
 async def get_logs_with_ws(websocket: WebSocket):
     await manager.connect(websocket)
     try:
