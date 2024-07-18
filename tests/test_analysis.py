@@ -11,15 +11,13 @@ class TestAnalysis:
     bs.headers["x_atop_version"] = "1.0.10"
 
     # url = f"http://127.0.0.1:8005"
+    # ws_url = f"http://127.0.0.1:8005"
     url = f"http://172.16.60.10:31690/apis/analysis"
-    # ws_url = f"ws://172.16.60.10:31690/apis/analysis"
+    ws_url = f"ws://172.16.60.10:31690/apis/analysis"
 
     payload = {
         "index": "logs",
         "key_words": {
-            # "pod.name": "aomaker-4bf580d6-53e1-4cf0-b0ef-1ec9b675e3f31",
-            # "container.name": "aomaker",
-            # "labels.uid": "4bf580d6-53e1-4cf0-b0ef-1ec9b675e3f31",
             "kubernetes.labels.uid": "4bf580d6-53e1-4cf0-b0ef-1ec9b675e3f31",
             "kubernetes.labels.app": "aomaker",
         },

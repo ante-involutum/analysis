@@ -89,17 +89,26 @@ async def get_logs_with_ws(websocket: WebSocket):
             offset = data.get("offset")
             key_words = data.get("key_words")
 
-            s = Search(using=es, index="filebeat-*").extra(size=size)
+            q = Query(
+                index="logs",
+                from_=from_,
+                offset=offset,
+                size=size,
+                key_words=key_words,
+            )
+            
+            logger.debug(q)
+            s = Search(using=es, index="filebeat-*").extra(size=q.size)
 
             if offset != None:
-                s = s.extra(search_after=offset)
+                s = s.extra(search_after=q.offset)
             else:
                 if from_ != None:
-                    s = s.extra(from_=from_)
+                    s = s.extra(from_=q.from_)
 
             s = s.query(
                 "bool",
-                must=[Q("term", **{k: v}) for k, v in key_words.items()],
+                must=[Q("term", **{k: v}) for k, v in q.key_words.items()],
             )
 
             s = s.sort({"@timestamp": {"order": "asc"}})
@@ -121,6 +130,7 @@ async def get_logs_with_ws(websocket: WebSocket):
             if data.get("task_id") != None:
                 result["task_id"] = data["task_id"]
 
+            logger.debug(result)
             await manager.send_personal_message(result, websocket)
 
     except WebSocketDisconnect:
