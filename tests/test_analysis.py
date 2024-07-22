@@ -8,7 +8,7 @@ class TestAnalysis:
 
     bs = Session()
     bs.headers["Authorization"] = "admin"
-    bs.headers["x_atop_version"] = "1.0.10"
+    bs.headers["x_atop_version"] = "dev"
 
     # url = f"http://127.0.0.1:8005"
     # ws_url = f"http://127.0.0.1:8005"
@@ -20,6 +20,7 @@ class TestAnalysis:
         "key_words": {
             "kubernetes.labels.uid": "4bf580d6-53e1-4cf0-b0ef-1ec9b675e3f31",
             "kubernetes.labels.app": "aomaker",
+            # "log.file.path": f"/hatbox/Log/logs/hatbox.log",
         },
         "from_": 0,
         "size": 20,
